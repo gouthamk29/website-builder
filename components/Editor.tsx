@@ -43,12 +43,14 @@ export default function Editor({components,setComponents,selectedId, setSelected
     
     return (
         <>
-       
+       <div className="h-full flex justify-center ">
+
         <div
-      className="h-full w-full bg-white relative overflow-auto p-4"
+      className="h-full w-65/100 bg-white relative overflow-auto box-content"
       onClick={() => setSelectedId(null)} // click outside to deselect
       >
       {...components.map((comp) => renderComponent(comp, setSelectedId))}
+          </div>
         </div>
         </>
     )

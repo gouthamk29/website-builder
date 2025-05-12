@@ -56,8 +56,6 @@ export default function Page(){
            "z-index":"1",
             right:'0',
             top:'1rem',
-            margin:'1rem'
-
           },
           content: "Welcome to my site!",
           children: [],
