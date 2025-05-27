@@ -32,7 +32,7 @@ type secondaryComponenTypes={
     | 'option';
 }
 
- type secondaryComponen={
+ type secondaryComponent={
     type:secondaryComponenTypes,
     content?:never,
     children_id:string[],
@@ -75,6 +75,6 @@ type primitiveCompontentTypes={
     content:string,
 }
 
-export type Component = primitiveComponent | secondaryComponent
+export type Component =BaseComponent & (primitiveComponent | secondaryComponent)
 
-
+    

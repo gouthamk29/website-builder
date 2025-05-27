@@ -2,7 +2,7 @@
 import Editor from "@/components/Editor"
 import EditorSidebar from "@/components/EditorSidebar"
 import { useState } from "react"
-
+import { Component } from "@/types"
 export default function Page(){
     const dummyComponent = [
         {
@@ -41,7 +41,7 @@ export default function Page(){
           children:[],
         }
     ]
-    const [components,setComponents] =useState<any>([
+    const [components,setComponents] =useState<Component>([
       {
           id: "comp_123",
           type: "div", // or "button", "input", etc.
@@ -78,7 +78,7 @@ export default function Page(){
   ]) 
     const [selectedId, setSelectedId] = useState<string | null>(null);
     
-    return <div className=" h-full flex ">
+    return <div className=" h-full flex relative">
         <div className="flex-1 bg-amber-300">
             <Editor components={components} setComponents={setComponents} selectedId={selectedId} setSelectedId={setSelectedId}/>
         </div>

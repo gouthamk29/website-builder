@@ -1,13 +1,18 @@
-import { Dispatch, useState, useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Dispatch, useState, useEffect, SetStateAction } from "react";
+import { Component } from "@/types"; 
+import cx  from "classnames";
+import { ListCollapse, Pencil, SquarePlus } from "lucide-react";
+import { Tooltip } from "react-tooltip";
 
 
-function EditorSidebar({
+function EditorSidebarOld({
   selectedId,
   components,
   setComponents,
 }: {
   selectedId: string | null;
-  components: any ;
+  components: Component[] ;
   setComponents: Dispatch<any>;
 }) {
   const selectedComponent = findComponentById(components, selectedId);
@@ -185,4 +190,91 @@ function findComponentById(
   return null;
 }
 
+function EditorSidebar({
+      selectedId,
+      components,
+      setComponents,
+  }:{
+      selectedId: string | null;
+      components: Component[];
+      setComponents: Dispatch<SetStateAction<Component>>;
+    }
+)
+{
+  
+    const [toggleSidebar,setToggleSidebar] = useState(false);
+
+
+  return <>
+    <div className={cx("h-full w-full  bg-white text-black overflow-hidden flex flex-col gap-2 py-4",
+      {'max-w-16 bg-amber-800' : toggleSidebar===false,}
+    )}>
+          <div className="px-4">
+            <button
+              data-tooltip-id="my-tooltip" data-tooltip-content="Toggle Sidebar"
+              className="w-full bg-amber-500 flex justify-center"
+              onClick={() => setToggleSidebar((e) => !e)}>
+                <ListCollapse/>
+            </button>
+            <Tooltip id="my-tooltip" place="left-start"/>
+          </div>
+
+          <div className="px-4">
+              <button
+                data-tooltip-id="my-tooltip" data-tooltip-content="Add Component"
+                className="w-full bg-amber-500 flex justify-center anchor-target"
+                popoverTarget="add-component" popoverTargetAction="toggle">
+                  <SquarePlus/>
+              </button>
+              <div id="add-component" popover='auto' role="tooltip" className="side-bar-anchor rounded-xl mx-2 my-2">
+                <AddComponent/>
+              </div>
+          </div>
+
+          <div className="px-4">
+              <button
+                data-tooltip-id="my-tooltip" data-tooltip-content="Edit Component"
+                className="w-full bg-amber-500 flex justify-center"
+                popoverTarget="edit-component" popoverTargetAction="toggle">
+                  <Pencil/>
+              </button>
+              <div id="edit-component" popover='auto' role="tooltip" className="p-4 mt-2 rounded shadow bg-gray-100 text-black border border-gray-300">
+                Edit component
+              </div>
+          </div>
+          
+
+         
+
+         
+    </div>
+  </>
+
+
+}
 export default EditorSidebar;
+
+function AddComponent(){
+  return <>
+    <div className="my-2 mx-1 ">
+
+      <h1>Add Component</h1>
+      <div className="grid grid-rows-2 gap-4 grid-flow-col border p-4 min-w-10">  
+          <AddComponentElements element="div"/>
+          <AddComponentElements element="p"/>
+          <AddComponentElements element="images"/>
+          <AddComponentElements element="span"/>
+      </div>
+
+    </div>
+  </>
+}
+type ElementProps = {
+  element: string;
+};
+
+function AddComponentElements({ element }: ElementProps) {
+  return <div className="rounded flex justify-center items-center p-2 border min-w-10">
+    <button className="">{element}</button>
+  </div>
+}
