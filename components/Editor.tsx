@@ -1,7 +1,7 @@
-// 'use client'
+'use client'
 // import { Dispatch, JSX, useState } from "react";
 
-import { closestCenter, DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { closestCenter, DragOverlay, PointerSensor, useDroppable, useSensor, useSensors } from "@dnd-kit/core";
 import { useState } from "react";
 import {
   SortableContext,
@@ -117,16 +117,13 @@ export default function Editor({component,setComponents}:{component:any,setCompo
     setActiveId(null)
   }
 
+  const {setNodeRef}=useDroppable({
+    id:"Drop"
+  });
+
   return (
     <div className="h-full flex justify-center">
-    <div className="h-full w-65/100 bg-white relative overflow-auto box-content">
-
-     <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-      >
+    <div className="h-full w-65/100 bg-white relative overflow-auto box-content" ref={setNodeRef}>
       <SortableContext
         items={component.map((c) => c.id)}
         strategy={verticalListSortingStrategy}
@@ -147,9 +144,15 @@ export default function Editor({component,setComponents}:{component:any,setCompo
       </SortableContext>
 
       <DragOverlay>
-        {activeId ? <DragPreview id={activeId} /> : null}
+         {activeId ? (
+    component.find((c) => c.id === activeId) ? (
+      <SortableComponent component={component.find((c) => c.id === activeId)} />
+    ) : (
+      <AddComponentPreview type={getTypeFromSidebarId(activeId)} />
+    )
+  ) : null}
       </DragOverlay>
-    </DndContext>
+    
           </div>
           </div>
   );
@@ -194,4 +197,5 @@ function DragPreview({ id }: { id: string }) {
     >
       Dragging: {id}
     </div>
-  );
+  )
+}

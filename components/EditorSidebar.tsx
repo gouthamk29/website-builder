@@ -261,7 +261,7 @@ function AddComponent(){
     <div className="my-2 mx-1 ">
 
       <h1>Add Component</h1>
-      <div className="grid grid-rows-2 gap-4 grid-flow-col border p-4 min-w-10">  
+      <div className="grid grid-rows-2 gap-4 grid-flow-col border p-4 min-w-10 overflow-hidden">  
           <AddComponentElements element="div"/>
           <AddComponentElements element="p"/>
           <AddComponentElements element="images"/>
@@ -279,13 +279,16 @@ function AddComponentElements({ element }: ElementProps) {
 
   const {attributes,listeners,setNodeRef,transform} = useDraggable({
     id:element,
-    data:{ element} ,
+    data:{element,
+      type:element
+    } ,
   })
 
   const style = {
     transform:CSS.Translate.toString(transform),
     border:'1px solid black',
-    cursor:'grab'
+    cursor:'grab',
+    
   }
 
   // return <div className="rounded flex justify-center items-center p-2 border min-w-10">
