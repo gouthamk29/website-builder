@@ -4,6 +4,8 @@ import { Component } from "@/types";
 import cx  from "classnames";
 import { ListCollapse, Pencil, SquarePlus } from "lucide-react";
 import { Tooltip } from "react-tooltip";
+import { useDraggable } from "@dnd-kit/core";
+import {CSS} from '@dnd-kit/utilities';
 
 
 function EditorSidebarOld({
@@ -274,7 +276,27 @@ type ElementProps = {
 };
 
 function AddComponentElements({ element }: ElementProps) {
-  return <div className="rounded flex justify-center items-center p-2 border min-w-10">
-    <button className="">{element}</button>
-  </div>
+
+  const {attributes,listeners,setNodeRef,transform} = useDraggable({
+    id:element,
+    data:{ element} ,
+  })
+
+  const style = {
+    transform:CSS.Translate.toString(transform),
+    border:'1px solid black',
+    cursor:'grab'
+  }
+
+  // return <div className="rounded flex justify-center items-center p-2 border min-w-10">
+  //   <button className="">{element}</button>
+  // </div>
+
+  return <button ref={setNodeRef} style={style} {...listeners} {...attributes}> 
+    {element}
+  </button>
+}
+
+function implementComponentAddition(){
+  
 }

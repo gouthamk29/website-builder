@@ -76,11 +76,13 @@ export default function Page(){
         children:[],
       }
   ]) 
+
+
     const [selectedId, setSelectedId] = useState<string | null>(null);
     
     return <div className=" h-full flex relative">
         <div className="flex-1 bg-amber-300">
-            <Editor components={components} setComponents={setComponents} selectedId={selectedId} setSelectedId={setSelectedId}/>
+            <Editor component={components} setComponents={setComponents} selectedId={selectedId} setSelectedId={setSelectedId}/>
         </div>
         <div className="absolute right-0 z-1 h-full">
             <EditorSidebar components={components} setComponents={setComponents} selectedId={selectedId} />
