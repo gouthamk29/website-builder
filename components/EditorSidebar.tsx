@@ -4,7 +4,7 @@ import { Component } from "@/types";
 import cx  from "classnames";
 import { ListCollapse, Pencil, SquarePlus } from "lucide-react";
 import { Tooltip } from "react-tooltip";
-import { useDrag } from "react-dnd";
+
 
 
 function EditorSidebarOld({
@@ -280,40 +280,9 @@ type ElementProps = {
 
 function AddComponentElements({ element }: ElementProps) {
 
-  const ref = useRef<HTMLDivElement>(null);
-
-  const [{isDragging},drag]=useDrag(()=>({
-    type:"div",
-    item:{
-            id:Math.round(Math.random()*100+1),
-            elementType:element,
-          },
-    collect:(monitor)=>({
-      isDragging: !!monitor.isDragging(),
-    })
-  }));
-
   
-useEffect(() => {
-  if (ref.current) {
-    drag(ref.current);
-  }
-}, [ref, drag]);
-
   return (
-          <div ref={ref}
-            style={
-              {
-                boxSizing:"border-box",
-                border:isDragging ? "2px solid pink":"2px solid black",
-                borderRadius:"0.6rem",
-                textAlign:"center",
-                transition:'all 0.2s ',
-                padding:"0.4rem",
-                cursor:"grab"
-              }
-            }
-          > 
+          <div>
             {element}
           </div>
           )

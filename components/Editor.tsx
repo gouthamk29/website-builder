@@ -2,8 +2,6 @@
 
 
 import { Component } from "@/types";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { useDrop } from "react-dnd";
 
 
 
@@ -15,7 +13,6 @@ export default function Editor({component,setComponents,selectedId,setSelectedId
   setSelectedId:Dispatch<SetStateAction<string | null>>,
 }){
 
-  const ref=useRef(null);
 
 
   function AddComponent(newComponent){
@@ -30,25 +27,13 @@ export default function Editor({component,setComponents,selectedId,setSelectedId
     setComponents(newComp);
   }
 
-  const [{},drop]= useDrop(()=>({
-    accept:"div",
-    drop:(e)=>AddElementToPage(e),
-  }))
 
 
-  function AddElementToPage(e){
-    console.log("dropped",e)
-  }
 
-  useEffect(()=>{
-     if (ref.current) {
-      drop(ref.current);
-  }
-  },[ref,drop])
 
   return (
     <div className="h-full flex justify-center">
-      <div ref={ref} className="h-full w-65/100 bg-white relative overflow-auto box-content">
+      <div className="h-full w-65/100 bg-white relative overflow-auto box-content">
        <RenderComponent id="_body" components={component} />
       </div>
     </div>
