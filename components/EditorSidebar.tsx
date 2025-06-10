@@ -4,6 +4,7 @@ import { Component } from "@/types";
 import cx  from "classnames";
 import { ListCollapse, Pencil, SquarePlus } from "lucide-react";
 import { Tooltip } from "react-tooltip";
+import { AddComponentElements } from "./AddComponentElements";
 
 
 
@@ -270,23 +271,10 @@ function AddComponent(){
           <AddComponentElements element="images"/>
           <AddComponentElements element="span"/>
       </div>
-
     </div>
   </>
 }
-type ElementProps = {
-  element: string;
-};
 
-function AddComponentElements({ element }: ElementProps) {
-
-  
-  return (
-          <div>
-            {element}
-          </div>
-          )
-}
 
 function implementComponentAddition(){
   

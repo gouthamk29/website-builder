@@ -7,6 +7,8 @@ import { Component } from "@/types"
 
 
 import DEVcomponentList from "@/dev-comp/DEVcomponentList"
+import { DndContext, DragOverlay } from "@dnd-kit/core"
+import DragedPreview from "@/components/DragedPreview"
 
 
 export default function Page(){
@@ -16,17 +18,24 @@ export default function Page(){
 
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
+    
     return <div className=" h-full flex relative">
        
-       
+        <DndContext onDragEnd={()=>console.log("dropped")}>
             <div className="flex-1 bg-amber-300">
                 <Editor component={components} setComponents={setComponents} selectedId={selectedId} setSelectedId={setSelectedId}/>
             </div>
             <div className="absolute right-0 z-1 h-full">
                 <EditorSidebar components={components} setComponents={setComponents} selectedId={selectedId} />
             </div>
-        
-        
+            <DragOverlay>
+                <DragedPreview/>
+            </DragOverlay>
+        </DndContext>
     </div>
+}
+
+function handleDragEnd(){
+    
 }
 
