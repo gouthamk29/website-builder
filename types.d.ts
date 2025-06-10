@@ -5,8 +5,7 @@
     
 }
 
-type secondaryComponenTypes={
-    type:
+export type secondaryComponenTypes=
     | 'div'
     | 'section'
     | 'header'
@@ -30,7 +29,7 @@ type secondaryComponenTypes={
     | 'label'
     | 'select'
     | 'option';
-}
+
 
  type secondaryComponent={
     type:secondaryComponenTypes,
@@ -39,8 +38,7 @@ type secondaryComponenTypes={
 
 }
 
-type primitiveCompontentTypes={
-    type: |'p'
+export type primitiveCompontentTypes= |'p'
     | 'h1'
     | 'h2'
     | 'h3'
@@ -67,7 +65,7 @@ type primitiveCompontentTypes={
     | 'audio'
     | 'hr'
     | 'br';
-}
+
 
  type primitiveComponent={
     type:primitiveCompontentTypes,

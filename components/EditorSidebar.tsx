@@ -1,21 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Dispatch, useState, useEffect, SetStateAction } from "react";
+import { Dispatch, useState, useEffect, SetStateAction, useRef } from "react";
 import { Component } from "@/types"; 
 import cx  from "classnames";
 import { ListCollapse, Pencil, SquarePlus } from "lucide-react";
 import { Tooltip } from "react-tooltip";
-import { useDraggable } from "@dnd-kit/core";
-import {CSS} from '@dnd-kit/utilities';
+import { useDrag } from "react-dnd";
 
 
 function EditorSidebarOld({
   selectedId,
   components,
   setComponents,
+  setSelectedId,
 }: {
-  selectedId: string | null;
-  components: Component[] ;
-  setComponents: Dispatch<any>;
+  selectedId: string | null,
+  components: Component[] ,
+  setComponents: Dispatch<SetStateAction<Component[]>>,
+  setSelectedId:Dispatch<SetStateAction<string | null>>
 }) {
   const selectedComponent = findComponentById(components, selectedId);
 
@@ -199,7 +200,7 @@ function EditorSidebar({
   }:{
       selectedId: string | null;
       components: Component[];
-      setComponents: Dispatch<SetStateAction<Component>>;
+      setComponents: Dispatch<SetStateAction<Component[]>>;
     }
 )
 {
@@ -257,6 +258,8 @@ function EditorSidebar({
 export default EditorSidebar;
 
 function AddComponent(){
+
+  
   return <>
     <div className="my-2 mx-1 ">
 
@@ -277,27 +280,43 @@ type ElementProps = {
 
 function AddComponentElements({ element }: ElementProps) {
 
-  const {attributes,listeners,setNodeRef,transform} = useDraggable({
-    id:element,
-    data:{element,
-      type:element
-    } ,
-  })
+  const ref = useRef<HTMLDivElement>(null);
 
-  const style = {
-    transform:CSS.Translate.toString(transform),
-    border:'1px solid black',
-    cursor:'grab',
-    
+  const [{isDragging},drag]=useDrag(()=>({
+    type:"div",
+    item:{
+            id:Math.round(Math.random()*100+1),
+            elementType:element,
+          },
+    collect:(monitor)=>({
+      isDragging: !!monitor.isDragging(),
+    })
+  }));
+
+  
+useEffect(() => {
+  if (ref.current) {
+    drag(ref.current);
   }
+}, [ref, drag]);
 
-  // return <div className="rounded flex justify-center items-center p-2 border min-w-10">
-  //   <button className="">{element}</button>
-  // </div>
-
-  return <button ref={setNodeRef} style={style} {...listeners} {...attributes}> 
-    {element}
-  </button>
+  return (
+          <div ref={ref}
+            style={
+              {
+                boxSizing:"border-box",
+                border:isDragging ? "2px solid pink":"2px solid black",
+                borderRadius:"0.6rem",
+                textAlign:"center",
+                transition:'all 0.2s ',
+                padding:"0.4rem",
+                cursor:"grab"
+              }
+            }
+          > 
+            {element}
+          </div>
+          )
 }
 
 function implementComponentAddition(){
