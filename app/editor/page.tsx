@@ -13,29 +13,43 @@ import DragedPreview from "@/components/DragedPreview"
 
 export default function Page(){
    
+   
+
+
+
     const [components,setComponents] =useState<Component[]>(DEVcomponentList) 
 
 
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
     
-    return <div className=" h-full flex relative">
-       
-        <DndContext onDragEnd={()=>console.log("dropped")}>
-            <div className="flex-1 bg-amber-300">
-                <Editor component={components} setComponents={setComponents} selectedId={selectedId} setSelectedId={setSelectedId}/>
-            </div>
-            <div className="absolute right-0 z-1 h-full">
-                <EditorSidebar components={components} setComponents={setComponents} selectedId={selectedId} />
-            </div>
-            <DragOverlay>
-                <DragedPreview/>
-            </DragOverlay>
-        </DndContext>
-    </div>
+
+     
+function handleDragEnd(){
+    setSelectedId(null);
 }
 
-function handleDragEnd(){
-    
+function handleDragStart(event:any){
+    console.log(event)
+    setSelectedId(event.active.id);
+    console.log("dragged",selectedId)
+}
+
+    return <div className=" h-full flex relative">
+       
+        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+            <div className="flex-1 bg-amber-300 h-full">
+                <Editor component={components} setComponents={setComponents} selectedId={selectedId} setSelectedId={setSelectedId}/>
+            </div>
+            <div className=" z-1 h-full">
+                <EditorSidebar components={components} setComponents={setComponents} selectedId={selectedId} />
+            </div>
+            {selectedId?.startsWith("add-elements-") && (
+          <DragOverlay>
+            <DragedPreview />
+          </DragOverlay>
+        )}
+        </DndContext>
+    </div>
 }
 

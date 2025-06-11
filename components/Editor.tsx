@@ -2,7 +2,10 @@
 
 
 import { Component } from "@/types";
-
+import { DragOverlay, useDraggable } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {CSS} from "@dnd-kit/utilities"
+import SortableItem from "./SortableItem";
 
 
 
@@ -27,33 +30,30 @@ export default function Editor({component,setComponents,selectedId,setSelectedId
     setComponents(newComp);
   }
 
-
-
-
-
+  const root = component.find(c => c.id === "_body");
   return (
     <div className="h-full flex justify-center">
-      <div className="h-full w-65/100 bg-white relative overflow-auto box-content">
-       <RenderComponent id="_body" components={component} />
+      <div className="flex-1 w-3/5 border-red-600 border">
+
+      <SortableContext
+        items={component.map(c=>c.id)}
+        strategy={verticalListSortingStrategy}
+        >
+       
+         
+          <SortableItem
+            key={root.id}
+            id={root.id}
+            components={component}
+            selectedId={selectedId}
+            setSelectedId={setSelectedId}
+          />
+       
+       <DragOverlay>
+
+       </DragOverlay>
+      </SortableContext>
       </div>
-    </div>
-  );
-}
-
-
-function RenderComponent({ id, components }: { id: string; components: Component[] }) {
-  const comp = components.find(c => c.id === id);
-  if (!comp) return null;
-
-  const { type, attributes, style, content, children_id = [] } = comp;
-  const Tag = type as keyof JSX.IntrinsicElements;
-
-  return (
-    <Tag key={id} {...attributes} style={style}>
-      {content}
-      {children_id.map(childId => (
-        <RenderComponent key={childId} id={childId} components={components} />
-      ))}
-    </Tag>
+     </div>
   );
 }
