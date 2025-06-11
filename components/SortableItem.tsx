@@ -1,8 +1,9 @@
-
+'use client'
 import { Component } from "@/types";
 import { useDraggable } from "@dnd-kit/core";
-import { useSortable } from "@dnd-kit/sortable";
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities"
+import { JSX } from "react";
 
 export default function SortableItem({
   id,
@@ -15,62 +16,89 @@ export default function SortableItem({
   selectedId: string | null;
   setSelectedId: (id: string | null) => void;
 }){
-
-    const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging
-  } = useSortable({ id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    opacity: isDragging ? 0.5 : 1,
-    // border: selectedId === id ? '2px solid blue' : '1px solid transparent'
-  };
-
    return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+
       <RenderComponent
         id={id}
         components={components}
         selectedId={selectedId!}
         setSelectedId={setSelectedId}
       />
-    </div>
+
   );  
 }
 
-
-
-
-function RenderComponent({ id, components,selectedId }: { id: string; components: Component[],selectedId:string }) {
+export function RenderComponent({ id, components,selectedId,setSelectedId }: { id: string; components: Component[],selectedId:string }) {
   
-  const {attributes: dragAttributes, listeners, setNodeRef, transform}=useDraggable({
-    id:`render-component-${id}`
-  })
-
   const comp = components.find(c => c.id === id);
   if (!comp) return null;
 
+  const isAbsolute = comp.style?.position === 'absolute';
+ const {
+    attributes: dragAttributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = isAbsolute
+    ? useDraggable({ id })
+    : useSortable({ id });
+
   const { type, attributes, style, content, children_id = [] } = comp;
-  const Tag = type as keyof JSX.IntrinsicElements;
+  
 
   
   const dragStyle  ={
     ...style,
     transform:CSS.Transform.toString(transform),
+    transition,
+     opacity: isDragging ? 0.6 : 1,
+    zIndex: isDragging && isAbsolute ? 999 : comp.style?.zIndex || "auto",
     outline: selectedId === `render-component-${id}` ? '2px solid blue' : undefined,
   }
 
+  const Tag =type as keyof JSX.IntrinsicElements;
+
   return (
-    <Tag ref={setNodeRef} key={id} {...attributes} style={dragStyle} {...listeners} {...dragAttributes}>
+    <Tag ref={setNodeRef} key={id} {...attributes} style={dragStyle} {...listeners} {...dragAttributes}
+      onClick={(e) => {
+        e.stopPropagation();
+        setSelectedId(id);
+      }}
+    >
       {content}
-      {children_id.map(childId => (
-        <RenderComponent key={childId} id={childId} components={components} selectedId={selectedId}/>
-      ))}
+      {comp.children_id?.length > 0 && !isAbsolute && (
+        <SortableContext
+          items={comp.children_id}
+          strategy={verticalListSortingStrategy}
+        >
+          {comp.children_id.map(childId => (
+            <SortableItem
+              key={childId}
+              id={childId}
+              components={components}
+              selectedId={selectedId}
+              setSelectedId={setSelectedId}
+            />
+          ))}
+        </SortableContext>
+      )}
+
+      {/* Absolute children (if any) */}
+      {comp.children_id?.length > 0 && isAbsolute && (
+        <>
+          {comp.children_id.map(childId => (
+            <SortableItem
+              key={childId}
+              id={childId}
+              components={components}
+              selectedId={selectedId}
+              setSelectedId={setSelectedId}
+            />
+          ))}
+        </>
+      )}
     </Tag>
   );
 }

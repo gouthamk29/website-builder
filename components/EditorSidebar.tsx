@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+'use client'
 import { Dispatch, useState, useEffect, SetStateAction, useRef } from "react";
 import { Component } from "@/types"; 
 import cx  from "classnames";

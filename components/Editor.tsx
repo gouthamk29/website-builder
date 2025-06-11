@@ -1,11 +1,9 @@
 'use client'
-
-
 import { Component } from "@/types";
 import { DragOverlay, useDraggable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities"
-import SortableItem from "./SortableItem";
+import SortableItem, { RenderComponent } from "./SortableItem";
 
 
 
@@ -31,16 +29,27 @@ export default function Editor({component,setComponents,selectedId,setSelectedId
   }
 
   const root = component.find(c => c.id === "_body");
+
+  if(!root)
+  return(
+    <div>
+      Root not found
+    </div>
+  )
+
+
+  const activeComponent = component.find((c) => c.id === selectedId);
+  const isAbsolute = activeComponent?.style?.position === "absolute";
+
+
   return (
     <div className="h-full flex justify-center">
       <div className="flex-1 w-3/5 border-red-600 border">
 
       <SortableContext
-        items={component.map(c=>c.id)}
+        items={root.children_id ?? []}
         strategy={verticalListSortingStrategy}
         >
-       
-         
           <SortableItem
             key={root.id}
             id={root.id}
@@ -48,11 +57,18 @@ export default function Editor({component,setComponents,selectedId,setSelectedId
             selectedId={selectedId}
             setSelectedId={setSelectedId}
           />
-       
-       <DragOverlay>
-
-       </DragOverlay>
       </SortableContext>
+      <DragOverlay>
+            {activeComponent && isAbsolute && (
+              <RenderComponent
+                id={activeComponent.id}
+                components={component}
+                selectedId={activeComponent.id}
+                setSelectedId={() => {}}
+                dragOverlay
+              />
+            )}
+          </DragOverlay>
       </div>
      </div>
   );
