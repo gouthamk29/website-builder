@@ -8,14 +8,14 @@ const DEVComponentList : Component[] = [
     attributes: { id: "_body" },
     style: {
       padding:"0",
-      margin:"0",
+      margin:"auto",
       width: "100%",
       height: "100%",
       position: "relative",
        overflowY: "auto", // ensure scroll only when needed
       backgroundColor: "#fff",
     },
-    children_id: ["comp_123", "div-1"],
+    children_id: ["comp_123"],
   },
   {
     id: "comp_123",
@@ -23,11 +23,9 @@ const DEVComponentList : Component[] = [
     attributes: { id: "hero-section" },
     style: {
       width: "100%",
-      height: "300px",
+      height: "200px",
       backgroundColor: "lightblue",
-      position: "absolute",
-      right: "0",
-      top: "1rem",
+      margin:"0",
     },
     children_id: ["text-1"],
   },
@@ -38,19 +36,15 @@ const DEVComponentList : Component[] = [
   style: { color: "black", fontSize: "16px" },
   content: "Welcome to my site!" // ✅ No children_id here
   },
+  
   {
-    id: "div-1",
-    type: "div",
-    attributes: {},
-    style: {
-      backgroundColor: "red",
-      margin: "2rem",
-      height: "1rem",
-      width: "1rem",
-      position: "relative",
-    },
-    children_id: [],
+     id: "text-2",
+  type: "p",
+  attributes: {},
+  style: { color: "black", fontSize: "16px" },
+  content: "Welcome to my site2!" // ✅ No children_id here
   },
+  
   ];
 
 export default DEVComponentList;

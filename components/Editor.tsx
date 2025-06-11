@@ -2,7 +2,11 @@
 
 
 import { Component } from "@/types";
-
+import { DragOverlay, useDraggable } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {CSS} from "@dnd-kit/utilities"
+import SortableItem, { RenderComponent } from "./SortableItem";
+import { useEffect, useState } from "react";
 
 
 
@@ -13,7 +17,13 @@ export default function Editor({component,setComponents,selectedId,setSelectedId
   setSelectedId:Dispatch<SetStateAction<string | null>>,
 }){
 
-
+  const [hydrated,setHydrated]=useState(false);
+  
+  useEffect(
+    ()=>{
+      setHydrated(true);
+    }
+    ,[])
 
   function AddComponent(newComponent){
     setComponents([...component,newComponent]);
@@ -27,9 +37,20 @@ export default function Editor({component,setComponents,selectedId,setSelectedId
     setComponents(newComp);
   }
 
+  const root = component.find(c => c.id === "_body");
+
+  if(!root)
+  return(
+    <div>
+      Root not found
+    </div>
+  )
 
 
+  const activeComponent = component.find((c) => c.id === selectedId);
+  const isAbsolute = activeComponent?.style?.position === "absolute";
 
+  if(!hydrated) return null;
 
   return (
     <div className="h-full flex justify-center">
