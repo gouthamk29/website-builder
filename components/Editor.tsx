@@ -1,7 +1,7 @@
 'use client'
 
 import { Component } from "@/types";
-import { DragOverlay, useDraggable } from "@dnd-kit/core";
+import { DragOverlay, useDraggable, useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities"
 import SortableItem, { RenderComponent } from "./SortableItem";
@@ -9,12 +9,13 @@ import { useEffect, useState } from "react";
 
 
 
-export default function Editor({component,setComponents,selectedId,setSelectedId}:{
+export default function Editor({component,setComponents,selectedId,setSelectedId,overId}:{
   component:Component[],
   setComponents:Dispatch<SetStateAction<Component[]>>,
   selectedId:string | null,
   setSelectedId:Dispatch<SetStateAction<string | null>>,
-}){
+  overId: string | null}
+){
 
   const [hydrated,setHydrated]=useState(false);
   
@@ -49,19 +50,45 @@ export default function Editor({component,setComponents,selectedId,setSelectedId
   const activeComponent = component.find((c) => c.id === selectedId);
   const isAbsolute = activeComponent?.style?.position === "absolute";
 
+  // function handleDrop(event:DragEvent){
+  //   console.log("dragged");
+  // }
+
+
   if(!hydrated) return null;
 
   return (
     <div className="h-full flex justify-center">
       <div className="h-full w-65/100 bg-white relative overflow-auto box-content">
-       <RenderComponent id="_body" components={component} />
+       <RenderComponent id="_body" components={component} overId={overId} />
       </div>
     </div>
   );
 }
 
 
-function RenderComponent({ id, components }: { id: string; components: Component[] }) {
+function DroppableWrapper({ id, children,overId }: { id: string, children: React.ReactNode;overId: string | null; }) {
+  const { setNodeRef } = useDroppable({ id });
+
+  console.log(`DroppableWrapper ${id}`,overId,id)
+
+  const isOver = overId === id;
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        outline: isOver ? '2px dashed red' : undefined,
+        minHeight: 20,
+        position: 'relative',
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+
+function RenderComponent({ id, components,overId }: { id: string; components: Component[];overId: string | null; }) {
   const comp = components.find(c => c.id === id);
   if (!comp) return null;
 
@@ -69,11 +96,13 @@ function RenderComponent({ id, components }: { id: string; components: Component
   const Tag = type as keyof JSX.IntrinsicElements;
 
   return (
-    <Tag key={id} {...attributes} style={style}>
-      {content}
-      {children_id.map(childId => (
-        <RenderComponent key={childId} id={childId} components={components} />
-      ))}
-    </Tag>
+      <DroppableWrapper id={id} overId={overId}>
+        <Tag key={id} {...attributes} style={style}>
+          {content}
+          {children_id.map(childId => (
+            <RenderComponent key={childId} id={childId}  overId={overId} components={components} />
+          ))}
+        </Tag>
+      </DroppableWrapper>
   );
 }

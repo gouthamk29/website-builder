@@ -38,6 +38,10 @@ export const componentProperty = {
     basic: [...layoutProps, ...spacingProps, ...backgroundProps],
     advanced: [...layoutAdvProps, ...borderProps, ...effectProps, ...interactiveProps],
   },
+  main: {
+    basic: [...layoutProps, ...spacingProps, ...backgroundProps],
+    advanced: [...layoutAdvProps, ...borderProps, ...effectProps, ...interactiveProps],
+  },
   p: {
     basic: [...typographyProps, ...spacingProps],
     advanced: [...typographyAdvProps],
