@@ -25,9 +25,6 @@ const DEVComponentList : Component[] = [
       width: "100%",
       height: "300px",
       backgroundColor: "lightblue",
-      position: "relative",
-      right: "0",
-      top: "1rem",
     },
     children_id: ["text-1","text-2"],
   },
@@ -43,25 +40,10 @@ const DEVComponentList : Component[] = [
      id: "text-2",
   type: "p",
   attributes: {},
-  style: { color: "black", fontSize: "16px" },
+  style: { color: "black", fontSize: "18px" },
   content: "Welcome to my site2!" // ✅ No children_id here
   },
-  {
-    id: "div-1",
-    type: "div",
-    attributes: {},
-    style: {
-      backgroundColor: "red",
-      margin: "2rem",
-      height: "1rem",
-      width: "1rem",
-      position: "absolute",
-      top:"5rem",
-      right:"5rem",
-      "z-index":"1",
-    },
-    children_id: [],
-  },
+  
   ];
 
 export default DEVComponentList;
