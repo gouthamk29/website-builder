@@ -10,7 +10,7 @@ const DEVComponentList : Component[] = [
       padding:"0",
       margin:"auto",
       width: "100%",
-      height: "100%",
+      height: "auto",
       position: "relative",
        overflowY: "auto", // ensure scroll only when needed
       backgroundColor: "#fff",
@@ -25,23 +25,22 @@ const DEVComponentList : Component[] = [
       width: "100%",
       height: "200px",
       backgroundColor: "lightblue",
-      margin:"0",
     },
-    children_id: ["text-1"],
+    children_id: ["text-1","text-2"],
   },
   {
      id: "text-1",
   type: "p",
   attributes: {},
   style: { color: "black", fontSize: "16px" },
-  content: "Welcome to my site!" // ✅ No children_id here
+  content: "Welcome to my site1!" // ✅ No children_id here
   },
   
   {
      id: "text-2",
   type: "p",
   attributes: {},
-  style: { color: "black", fontSize: "16px" },
+  style: { color: "black", fontSize: "18px" },
   content: "Welcome to my site2!" // ✅ No children_id here
   },
   

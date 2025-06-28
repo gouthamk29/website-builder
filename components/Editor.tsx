@@ -1,6 +1,5 @@
 'use client'
 
-
 import { Component } from "@/types";
 import { DragOverlay, useDraggable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
