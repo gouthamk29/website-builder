@@ -7,6 +7,8 @@ import { Component } from "@/types"
 import DEVcomponentList from "@/dev-comp/DEVcomponentList"
 import { DndContext, DragEndEvent, DragOverlay } from "@dnd-kit/core"
 import DragedPreview from "@/components/Editor/DragedPreview"
+import { randomUUID } from "crypto"
+import { primitiveComponentTypes, secondaryComponentTypes } from "@/helpers/componentType"
 
 
 export default function Page(){
@@ -20,8 +22,8 @@ export default function Page(){
 function handleDragEnd(event:DragEndEvent){
     // setSelectedId(null);
     // CurrentSelectedId.current = null;
-    console.log('dragged');
-
+    console.log('dragged End');
+  
     const { active, over } = event;
 
   if (!over || !active?.data?.current) return;
@@ -32,7 +34,48 @@ function handleDragEnd(event:DragEndEvent){
   if (!elementType) return;
 
   console.log("Dropped:", elementType, "on component with id:", droppedOnId);
+
+  updateComponentList(elementType,droppedOnId);
 }
+
+function updateComponentList(element: any, parentId: string) {
+  setComponents(prev => {
+    const newElement = CreateNewElement(element);
+
+    return prev.map(comp => {
+      if (comp.id === parentId && Array.isArray(comp.children_id)) {
+        return {
+          ...comp,
+          children_id: [...comp.children_id, newElement.id],
+        };
+      }
+      return comp;
+    }).concat(newElement); 
+  });
+}
+
+function CreateNewElement(element){
+
+  
+  const isPrimitive:boolean =primitiveComponentTypes.includes(element)
+
+  const newComponent:Component = {
+    id:crypto.randomUUID(),
+    type:element,
+    attributes:{},
+    style:{
+    ...(isPrimitiveComponent(element) 
+      ? getDefaultPrimitiveStyles(element) 
+      : getDefaultSecondaryStyles(element)),
+  },
+    children_id:isPrimitive?undefined:[],
+    content:isPrimitive?`${element} element`:undefined
+  }
+  return newComponent;
+}
+
+
+
 
 function handleDragStart(event:any){
     console.log(event)
@@ -69,3 +112,42 @@ function handleDragOver(event: any) {
     </div>
 }
 
+export function getDefaultSecondaryStyles(type: string): Record<string, string> {
+  if (!isSecondaryComponent(type)) return {};
+
+  return {
+    margin: "1rem 0",
+    padding: "1rem",
+    backgroundColor: "#f9f9f9",
+    border: "1px dashed #ccc",
+    minHeight: "50px",
+  };
+}
+
+
+export function isPrimitiveComponent(type: string): type is (typeof primitiveComponentTypes)[number] {
+  return primitiveComponentTypes.includes(type as any);
+}
+
+export function isSecondaryComponent(type: string): type is (typeof secondaryComponentTypes)[number] {
+  return secondaryComponentTypes.includes(type as any);
+}
+
+/**
+ * Default styles for primitive components
+ */
+export function getDefaultPrimitiveStyles(type: string): Record<string, string> {
+  if (!isPrimitiveComponent(type)) return {};
+
+  switch (type) {
+    case "img":
+      return { width: "100px", height: "auto" };
+    case "button":
+      return { padding: "0.5rem 1rem", backgroundColor: "#007bff", color: "white", border: "none" };
+    case "input":
+    case "textarea":
+      return { padding: "0.5rem", border: "1px solid #ccc", width: "100%" };
+    default:
+      return {};
+  }
+}
