@@ -45,7 +45,9 @@ export default function EditComponent({
   }
 
 const handleStyleChange = (prop: string, value: string) => {
-  if (!isValidCssValue(prop, value)) return; // ❌ skip invalid
+  console.log(`incoming prop check ${prop} :${value}`)
+  if (!isValidCssValue(prop, value)) return; 
+  console.log(`incoming prop valid ${prop} :${value}`)
 
   const updatedComponents = components.map((component) =>
     component.id === selectedComponent.id
@@ -122,18 +124,36 @@ function StylePropertyValue({
 
   function changeStyleProperty(e: React.ChangeEvent<HTMLInputElement>) {
     const newValue = e.target.value;
+    console.log(newValue)
     setPropertyValue(newValue);
     onChange(prop, newValue);
+  }
+
+  function changeColorProperty(e){
+    console.log(e);
+    if(e.target.value)
+      changeStyleProperty(e);
   }
 
   return (
     <div className="flex justify-between items-center gap-2">
       <span className="w-1/3 text-right font-mono">{prop}</span>
-      <input
-        className="flex-1 border px-2 py-1 rounded bg-white text-sm"
-        value={propertyValue}
-        onChange={changeStyleProperty}
-      />
+      {
+       prop==='color'||prop==='backgroundColor'?(
+        <>
+        <input type="color" value={convertToHexIfColor(propertyValue)} onChange={changeColorProperty}/>
+        <input type="value" value={convertToHexIfColor(propertyValue)} onChange={changeColorProperty} className="flex-1 border px-2 py-1 rounded bg-grey text-sm text-right"/>
+        </>
+
+       )
+        :(
+          <input
+          className="flex-1 border px-2 py-1 rounded bg-white text-sm text-right"
+          value={propertyValue}
+          onChange={changeStyleProperty}
+          />
+      )
+      }
     </div>
   );
 }
@@ -152,7 +172,47 @@ function isValidCssValue(property: string, value: string): boolean {
 if (property === "fontFamily") {
     return isValidFontFamily(value);
 }
+if (property ==="color"||property==="backgroundColor"){
+    return isValidColor(value);
+}
   const el = document.createElement("div");
   el.style[property as any] = value;
   return el.style[property as any] === value;
+}
+
+function isValidColor(value){
+  const hexColorRegex = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+  if (hexColorRegex.test(value)) {
+    return true;
+  }
+
+  const s = new Option().style;
+  s.color = '';
+  s.color = value;
+
+  return s.color !== '';
+}
+
+function convertToHexIfColor(value: string): string {
+  const hexRegex = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+  if (hexRegex.test(value)) return value.toLowerCase();
+
+  const el = document.createElement("div");
+  el.style.color = value;
+  document.body.appendChild(el);
+  const computed = getComputedStyle(el).color;
+  document.body.removeChild(el);
+
+  const match = computed.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+  if (!match || el.style.color === '') {
+    // It's an invalid color — return an empty string or handle it gracefully
+    console.warn(`Invalid color input: "${value}"`);
+    return "#000000"; // or return "" if you want to block it
+  }
+
+  const [r, g, b] = match.slice(1).map(Number);
+  return (
+    "#" +
+    [r, g, b].map((c) => c.toString(16).padStart(2, "0")).join("")
+  ).toLowerCase();
 }

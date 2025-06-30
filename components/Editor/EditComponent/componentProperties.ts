@@ -38,6 +38,14 @@ export const componentProperty = {
     basic: [...layoutProps, ...spacingProps, ...backgroundProps],
     advanced: [...layoutAdvProps, ...borderProps, ...effectProps, ...interactiveProps],
   },
+  header: {
+    basic: [...layoutProps, ...spacingProps, ...backgroundProps],
+    advanced: [...layoutAdvProps, ...borderProps, ...effectProps, ...interactiveProps],
+  },
+  section: {
+    basic: [...layoutProps, ...spacingProps, ...backgroundProps],
+    advanced: [...layoutAdvProps, ...borderProps, ...effectProps, ...interactiveProps],
+  },
   main: {
     basic: [...layoutProps, ...spacingProps, ...backgroundProps],
     advanced: [...layoutAdvProps, ...borderProps, ...effectProps, ...interactiveProps],
