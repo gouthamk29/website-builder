@@ -76,3 +76,11 @@ export type primitiveCompontentTypes= |'p'
 export type Component =BaseComponent & (primitiveComponent | secondaryComponent)
 
     
+export type UserType = {
+  _id: string;
+  name: string;
+  email: string;
+  role: "USER" | "ADMIN";
+  createdAt: string; // or Date
+  updatedAt: string; // or Date
+};

@@ -1,0 +1,13 @@
+{
+    "app":{
+        "description":""
+    },
+    "themes":{
+        "color":{
+            "primary":"",
+            "secondary":"",
+            "assorted":["#E0FBFC","#C2DFE3","#9DB4C0","#5C6B73","#253237"]
+        }
+    }
+
+}
