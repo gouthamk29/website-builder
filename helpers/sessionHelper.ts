@@ -3,7 +3,6 @@ import Session from "@/models/session";
 import User from "@/models/user";
 import crypto from "crypto"
 import { cookies } from "next/headers";
-// import { cookies } from "next/headers";
 
 
 const COOKIE_SESSION_KEY="session-token"
@@ -18,11 +17,9 @@ export async function createSession(id:string,cookieStore: Pick<Awaited<ReturnTy
         await connectDB();
         
         
-        // Check if user already has an active session
         const existingSession = await Session.findOne({ userId:id });
         
         if (existingSession) {
-        // Option 1: delete old session
         await Session.deleteOne({ _id: existingSession._id });
         }
 
@@ -36,7 +33,6 @@ export async function createSession(id:string,cookieStore: Pick<Awaited<ReturnTy
             
             
             
-            // const cookieStore = await cookies();
             
            cookieStore.set(COOKIE_SESSION_KEY, sessionId, {
             
@@ -69,9 +65,7 @@ export async function getUserfromSession() {
     if(!userSession){
         return null;
     }
-    // console.log(userSession)
     const user = await User.findById(userSession.userId).select("-password -salt");
-    // console.log("from returned user",user)
     return user;
 }
 

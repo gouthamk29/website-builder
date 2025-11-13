@@ -3,7 +3,8 @@ import { Component } from "@/types";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities"
-import { JSX, useEffect, useState } from "react";
+import { Dispatch, JSX, SetStateAction, useEffect, useState } from "react";
+import { primitiveComponentTypes, secondaryComponentTypes } from "@/helpers/componentType";
 
 export default function SortableItem({
   id,
@@ -15,7 +16,7 @@ export default function SortableItem({
   id: string;
   components: Component[];
   selectedId: string | null;
-  setSelectedId: (id: string | null) => void;
+  setSelectedId: Dispatch<SetStateAction<string | null>>
   overId:string|null;
 }){
    return (
@@ -31,25 +32,36 @@ export default function SortableItem({
   );  
 }
 
-export function RenderComponent({ id, components,selectedId,setSelectedId,overId }: { id: string; components: Component[],selectedId:string, overId: string | null; }) {
+export function RenderComponent({ id, components,selectedId,setSelectedId,overId }: { id: string; components: Component[],selectedId:string, overId: string | null;setSelectedId:Dispatch<SetStateAction<string | null>> }) {
   
 
-  const draggable = useDraggable({id});
-  const sortable = useSortable({id});
+  
+  const comp = components.find(c => c.id === id);
+  
+  
+  // const draggable = useDraggable({id});
+  const sortable = useSortable(
+    {
+      id,
+      data:{
+        type:`sortable-element`,
+        componentType:comp?.type,
+        component:comp,
+      }
+    }
+  );
   const [isMount,setIsMount]= useState(false);
 
-  const { setNodeRef: setDropRef, isOver } = useDroppable({ id });
+  
   
   useEffect(()=>{
     setIsMount(true);
   },[])
 
   if(!isMount){
-      return null;
-    }
-
-
-  const comp = components.find(c => c.id === id);
+    return null;
+  }
+  
   if (!comp) return null;
 
   const isAbsolute = comp.style?.position === 'absolute';
@@ -60,11 +72,11 @@ const {
     setNodeRef: setDragRef,
     transform,
     isDragging
-  } = isAbsolute ? draggable : sortable;
+  } = sortable;
 
     const mergedRef = (el: HTMLElement | null) => {
     setDragRef(el);
-    setDropRef(el);
+    
   };
 
   const { type, attributes, style, content, children_id = [] } = comp;
@@ -74,57 +86,58 @@ const {
   const dragStyle  ={
     ...style,
     transform:CSS.Transform.toString(transform),
-     opacity: isDragging ? 0.6 : 1,
+    opacity: isDragging ? 0.6 : 1,
     zIndex: isDragging && isAbsolute ? 999 : comp.style?.zIndex || "auto",
     outline:
-      isOver || overId === id
+          overId === id
         ? "2px dashed red"
         : selectedId === id
         ? "2px solid blue"
         : undefined,
   }
 
-  const Tag =type as keyof JSX.IntrinsicElements;
+  const Tag =type as unknown as React.ElementType;
 
+   const isContainer = secondaryComponentTypes.includes(type);
+  const isPrimitive = primitiveComponentTypes.includes(type);
 
   return (
     <Tag ref={mergedRef} key={id} {...attributes} style={dragStyle} {...listeners} {...dragAttributes}
       onClick={(e) => {
-        e.stopPropagation();
+        e.stopPropagation()
         setSelectedId(id);
       }}
     >
       {content}
-      {comp.children_id?.length > 0 && !isAbsolute && (
-        <SortableContext
-          items={comp.children_id}
-          strategy={verticalListSortingStrategy}
-        >
-          {comp.children_id.map(childId => (
+      {children_id.length > 0 && !isAbsolute && isContainer && (
+        <SortableContext items={children_id}>
+          {children_id.map((childId) => (
             <SortableItem
               key={childId}
               id={childId}
               components={components}
               selectedId={selectedId}
               setSelectedId={setSelectedId}
+              overId={null}
             />
           ))}
         </SortableContext>
       )}
 
-      {comp.children_id?.length > 0 && isAbsolute && (
-        <>
-          {comp.children_id.map(childId => (
-            <SortableItem
-              key={childId}
-              id={childId}
-              components={components}
-              selectedId={selectedId}
-              setSelectedId={setSelectedId}
-            />
-          ))}
-        </>
+      {children_id.length > 0 && !isAbsolute && isPrimitive && (
+          <>
+            {children_id.map((childId) => (
+              <SortableItem
+                key={childId}
+                id={childId}
+                components={components}
+                selectedId={selectedId}
+                setSelectedId={setSelectedId}
+                overId={null}
+              />
+            ))}
+          </>
       )}
     </Tag>
-  );
+  )
 }

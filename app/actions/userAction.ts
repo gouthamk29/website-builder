@@ -121,7 +121,7 @@ export async function loginUserAction(formData:FormData) {
 
 
 export async function logoutUserAction() {
-
+    console.log("logout from actions")
     try{
         await connectDB();
 
@@ -130,7 +130,7 @@ export async function logoutUserAction() {
         }
         
         const cookieStore = await cookies();
-        const sessionId = cookieStore.get("sessionId")?.value;
+        const sessionId = cookieStore.get("session-token")?.value;
 
         if (!sessionId) {
         return { success: false, message: "No active session found" };
@@ -140,12 +140,12 @@ export async function logoutUserAction() {
         const deleted = await Session.findOneAndDelete({ sessionId });
         if (!deleted) {
         // still clear cookie to avoid dangling cookie
-        cookieStore.delete("sessionId");   
+        cookieStore.delete("session-token");   
         return { success: false, message: "Session not found in DB, cookie cleared" };
         }
 
         // Clear cookie
-        cookieStore.delete("sessionId");
+        cookieStore.delete("session-token");
 
         return { success: true, message: "Session removed and cookie cleared" };
         

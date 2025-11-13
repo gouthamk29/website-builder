@@ -1,8 +1,9 @@
 'use client'
 
+import { logoutUserAction } from "@/app/actions/userAction";
 import { useAuth } from "@/hooks/useAuth"
 import Link from "next/link"
-import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 
 
@@ -10,6 +11,8 @@ export const HomePage = () => {
   
   
   const {loading,user} = useAuth();
+
+   
 
 
 
@@ -21,16 +24,10 @@ export const HomePage = () => {
   return (
     <div className="">
       <nav>
-        <ul className="flex justify-between p-2">
+        <ul className="flex justify-between p-2 text-NPxl">
           <li>Webex</li>
           <li>
-            {/* <ul className="flex gap-4">
-         
-              <Link href={`/${'guest'}/${'demo'}/editor`}><li>Get Started</li></Link>
-              <Link href="/register"><li>Sign up</li></Link>
-              <Link href="/login"><li>login</li></Link>
-              
-            </ul> */}
+           
             {
               loading && <Loading/>
             }
@@ -85,6 +82,7 @@ export const HomePage = () => {
 
 const NonAuthenticatedNavBar = () =>{
 
+  
 
   return (
             <ul className="flex gap-4">
@@ -99,16 +97,30 @@ const NonAuthenticatedNavBar = () =>{
 
 
 const  AuthenticatedNavBar= ({user}) =>{
-
+    const router = useRouter();
     const userId = user._id;
 
+    
+async function handleLogOut(){
+  // destroySession();
+
+  try{
+    await logoutUserAction();
+    console.log("awaiting")
+    router.push('/login');
+  }catch(error){
+    console.log(error)
+  }
+  
+  
+}
 
   return (
             <ul className="flex gap-4">
          
-              <Link href={`/${userId}`}><li>Editor</li></Link>
-              <Link href="/logout"><li>logout</li></Link>
-              
+              <Link href={`/projects`}><li>Editor</li></Link>
+              {/* <Link href="/logout"><li>logout</li></Link> */}
+              <span className="cursor-pointer" onClick={handleLogOut}>Logout</span>
             </ul>
         )
 
@@ -118,3 +130,4 @@ const  AuthenticatedNavBar= ({user}) =>{
 const Loading = () =>{
   return <span>Loading....</span>
 }
+

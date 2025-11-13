@@ -2,7 +2,7 @@
     id:string,
     attributes:Record<attributesType,string>,
     style:Record<string,string>,
-    
+    parent_id:string|null,
 }
 
 export type secondaryComponenTypes=

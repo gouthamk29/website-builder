@@ -2,12 +2,12 @@
 import { useDraggable } from "@dnd-kit/core";
 import {CSS} from "@dnd-kit/utilities"
 import { useEffect, useState } from "react";
-// import { forwardRef } from "react";
  type ElementProps = {
-  element: string;
+  elementType: string;
+  elementName: string;
 };
 
-export function AddComponentElements({ element }: ElementProps) {
+export function AddComponentElements({ elementType,elementName }: ElementProps) {
 
   const [isMounted,setIsMounted] = useState(false);
 
@@ -18,9 +18,10 @@ export function AddComponentElements({ element }: ElementProps) {
 
   
   const {attributes, listeners, setNodeRef, transform}=useDraggable({
-    id:`add-elements-${element}`,
+    id:`add-elements-${elementType}`,
     data:{
-      elementType:element,
+      from:"add-element-component",
+      elementType:elementType,
     }
   })
 
@@ -35,8 +36,8 @@ export function AddComponentElements({ element }: ElementProps) {
 
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      {element}
+    <div onClick={(e)=>e.stopPropagation()} ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      {elementName}
     </div>
   );
 }

@@ -1,19 +1,20 @@
 'use client'
 import { Component } from "@/types";
-import { DragOverlay, useDraggable } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import {CSS} from "@dnd-kit/utilities"
-import SortableItem, { RenderComponent } from "./SortableItem"
+import { SortableContext } from "@dnd-kit/sortable";
+import SortableItem from "./SortableItem"
+import { Dispatch, SetStateAction } from "react";
 
 
 
-export default function Editor({component,setComponents,selectedId,setSelectedId}:{
+export default function Editor({component,setComponents,selectedId,setSelectedId,overId}:{
   component:Component[],
   setComponents:Dispatch<SetStateAction<Component[]>>,
   selectedId:string | null,
   setSelectedId:Dispatch<SetStateAction<string | null>>,
+  overId:string | null
 }){
-
+  // console.log(...component)
+  console.log(component.find(c => c.id == "_body"))
   const root = component.find(c => c.id === "_body");
 
   if(!root)
@@ -29,22 +30,30 @@ export default function Editor({component,setComponents,selectedId,setSelectedId
     <div className="h-full flex justify-center">
       <div className="flex-1 w-3/5 border-red-600 border">
       
-        <div id="_body" style={root.style} {...root.attributes}>
-          {root.content}
-          <SortableContext
-            items={root.children_id ?? []}
-            strategy={verticalListSortingStrategy}
+        
+          <div id="_body" style={root.style} {...root.attributes}>
+            {root.content}
+            <SortableContext
+              items={root.children_id ?? []}
             >
-              <SortableItem
-                key={root.id}
-                id={root.id}
-                components={component}
-                selectedId={selectedId}
-                setSelectedId={setSelectedId}
+              {(root.children_id ?? []).map((childId) => (
+                <SortableItem
+                  key={childId}
+                  id={childId}
+                  components={component}
+                  selectedId={selectedId}
+                  setSelectedId={setSelectedId}
+                  overId={overId}       //look into later
                 />
-          </SortableContext>
+              ))}
+            </SortableContext>
+          </div>
         </div>
       </div>
-     </div>
+     
   );
 }
+
+
+
+

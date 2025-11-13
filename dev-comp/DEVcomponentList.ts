@@ -1,55 +1,7 @@
-import { Component } from "@/types"
-
-
-// const DEVComponentList : Component[] = [
-//      {
-//     id: "_body",
-//     type: "div",
-//     attributes: { id: "_body" },
-//     style: {
-//       padding:"0",
-//       margin:"auto",
-//       width: "100%",
-//       height: "auto",
-//       position: "relative",
-//        overflowY: "auto", // ensure scroll only when needed
-//       backgroundColor: "#fff",
-//     },
-//     children_id: ["comp_123"],
-//   },
-//   {
-//     id: "comp_123",
-//     type: "div",
-//     attributes: { id: "hero-section" },
-//     style: {
-//       width: "100%",
-//       height: "200px",
-//       backgroundColor: "lightblue",
-//     },
-//     children_id: ["text-1","text-2"],
-//   },
-//   {
-//      id: "text-1",
-//   type: "p",
-//   attributes: {},
-//   style: { color: "black", fontSize: "16px" },
-//   content: "Welcome to my site1!" // ✅ No children_id here
-//   },
-  
-//   {
-//      id: "text-2",
-//   type: "p",
-//   attributes: {},
-//   style: { color: "black", fontSize: "18px" },
-//   content: "Welcome to my site2!" // ✅ No children_id here
-//   },
-  
-//   ];
-
-// export default DEVComponentList;
-
+import { Component } from "@/types";
 
 const DEVComponentList: Component[] = [
+  // BODY
   {
     id: "_body",
     type: "div",
@@ -63,6 +15,7 @@ const DEVComponentList: Component[] = [
       backgroundColor: "#f0f0f0",
     },
     children_id: ["header", "main", "footer"],
+    parent_id: null,
   },
 
   // HEADER
@@ -76,6 +29,7 @@ const DEVComponentList: Component[] = [
       padding: "1rem",
     },
     children_id: ["logo", "navbar"],
+    parent_id: "_body",
   },
   {
     id: "logo",
@@ -83,6 +37,7 @@ const DEVComponentList: Component[] = [
     attributes: {},
     style: { fontSize: "24px" },
     content: "MyLogo",
+    parent_id: "header",
   },
   {
     id: "navbar",
@@ -93,6 +48,7 @@ const DEVComponentList: Component[] = [
       gap: "1rem",
     },
     children_id: ["nav1", "nav2"],
+    parent_id: "header",
   },
   {
     id: "nav1",
@@ -100,6 +56,7 @@ const DEVComponentList: Component[] = [
     attributes: { href: "#" },
     style: { textDecoration: "none", color: "white" },
     content: "Home",
+    parent_id: "navbar",
   },
   {
     id: "nav2",
@@ -107,6 +64,7 @@ const DEVComponentList: Component[] = [
     attributes: { href: "#" },
     style: { textDecoration: "none", color: "white" },
     content: "Contact",
+    parent_id: "navbar",
   },
 
   // MAIN
@@ -119,6 +77,7 @@ const DEVComponentList: Component[] = [
       backgroundColor: "white",
     },
     children_id: ["hero", "content"],
+    parent_id: "_body",
   },
   {
     id: "hero",
@@ -129,6 +88,7 @@ const DEVComponentList: Component[] = [
       backgroundColor: "lightblue",
     },
     children_id: ["heroText"],
+    parent_id: "main",
   },
   {
     id: "heroText",
@@ -136,6 +96,7 @@ const DEVComponentList: Component[] = [
     attributes: {},
     style: { fontSize: "28px" },
     content: "Welcome to our product",
+    parent_id: "hero",
   },
   {
     id: "content",
@@ -143,6 +104,7 @@ const DEVComponentList: Component[] = [
     attributes: {},
     style: { padding: "1rem" },
     children_id: ["para1", "card"],
+    parent_id: "main",
   },
   {
     id: "para1",
@@ -150,6 +112,7 @@ const DEVComponentList: Component[] = [
     attributes: {},
     style: {},
     content: "This is a description paragraph with some text.",
+    parent_id: "content",
   },
   {
     id: "card",
@@ -161,6 +124,7 @@ const DEVComponentList: Component[] = [
       borderRadius: "8px",
     },
     children_id: ["cardTitle", "cardContent"],
+    parent_id: "content",
   },
   {
     id: "cardTitle",
@@ -168,6 +132,7 @@ const DEVComponentList: Component[] = [
     attributes: {},
     style: {},
     content: "Card Title",
+    parent_id: "card",
   },
   {
     id: "cardContent",
@@ -175,6 +140,7 @@ const DEVComponentList: Component[] = [
     attributes: {},
     style: {},
     content: "Card content goes here.",
+    parent_id: "card",
   },
 
   // FOOTER
@@ -188,6 +154,7 @@ const DEVComponentList: Component[] = [
       textAlign: "center",
     },
     children_id: ["footerText"],
+    parent_id: "_body",
   },
   {
     id: "footerText",
@@ -195,6 +162,7 @@ const DEVComponentList: Component[] = [
     attributes: {},
     style: { fontSize: "14px" },
     content: "© 2025 MySite. All rights reserved.",
+    parent_id: "footer",
   },
 ];
 

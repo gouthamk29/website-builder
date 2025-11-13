@@ -2,17 +2,14 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/connectDb";
 import Project from "@/models/project";
 
-// GET /api/projects/user/[userId]
 export async function GET(
   req: Request,
   { params }: { params: { userId: string } }
 ) {
   try {
     await connectDB();
-
     const { userId } = params;
 
-    // Find all projects belonging to this user
     const projects = await Project.find({ userId }).sort({ updatedAt: -1 });
 
     if (!projects || projects.length === 0) {

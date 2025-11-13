@@ -42,48 +42,57 @@ const Login = ()=>{
       },[status])
 
     return(
-        <div className="= border-2 border-white p-2 bg-green-200 text-black">
-            
-            <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-md max-w-md">
+    <div className="h-dvh flex justify-center items-center">
 
-                <label>
-                    email
-                </label>
-                <input
+
+        <div className="= border-1 border-gray-100 p-2 text-white rounded-md">
+            
+            <form onSubmit={handleSubmit} className="space-y-4 p-4  rounded-md max-w-md">
+                <div className="flex px-4 justify-between">
+                    <label className="p-2">
+                        Email
+                    </label>
+                    <input
                     name="email"
                     type="email"
                     placeholder="email"
                     required
-                    className="bg-white  border-2 border-blue-300 rounded"
+                    className="bg-black px-1 text-white border-2 border-white rounded"
                     />
-                <label>
-                    password
-                </label>
-                <input
-                    name="password"
-                    type="password"
-                    placeholder="password"
-                    required
-                    className="bg-white  border-2 border-blue-300 rounded"
-                    />
+                </div>
+                <div  className="flex px-4 justify-between">
+                    <label className="p-2">
+                        Password
+                    </label>
+                    <input
+                        name="password"
+                        type="password"
+                        placeholder="password"
+                        required
+                        className="bg-gray-800 px-1 text-white  border-2 border-blue-300 rounded"
+                        />
+                </div>
 
+                <div className="flex justify-end">
 
                     <button
                         type="submit"
                         disabled={status === "loading"}
                         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center gap-2"
-                    >
+                        >
                         {status === "loading" && (
-                        <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4" />
+                            <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4" />
                         )}
                         Submit
                     </button>
+                </div>
 
                     {status !== "idle" && <p className={status === "success" ? "text-green-600" : "text-red-500"}>{message}</p>}
                     {status ==="success" && <p className="text-green-600">redirecting to home page in 5sec</p>}
             </form>
 
         </div>
+    </div>
     )
 
 }

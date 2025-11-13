@@ -7,21 +7,19 @@ import { Component } from "@/types"
 import DEVcomponentList from "@/dev-comp/DEVcomponentList"
 import { DndContext, DragEndEvent, DragOverlay } from "@dnd-kit/core"
 import DragedPreview from "@/components/Editor/DragedPreview"
-import { randomUUID } from "crypto"
 import { primitiveComponentTypes, secondaryComponentTypes } from "@/helpers/componentType"
 
 
 export default function Page(){
    
     const [overId, setOverId] = useState<string | null>(null);
-    const [components,setComponents] =useState<Component[]>(DEVcomponentList) 
+    const [components,setComponents] =useState<Component[]>([]) 
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const CurrentSelectedId = useRef(null);
 
 
 function handleDragEnd(event:DragEndEvent){
-    // setSelectedId(null);
-    // CurrentSelectedId.current = null;
+    
     console.log('dragged End');
   
     const { active, over } = event;
