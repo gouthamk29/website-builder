@@ -37,7 +37,7 @@ export async function PUT(
 
   try{
     await connectDB();
-    console.log()
+    // console.log()
     const { projectId } = await context.params;
 
     const body = await request.json()
@@ -54,6 +54,8 @@ export async function PUT(
 
     if (body.projectDescription !== undefined)
       project.projectDescription = body.projectDescription;
+
+    console.log("/routes.ts Put",body.data)
 
     if (body.data !== undefined)
       project.data = body.data; 

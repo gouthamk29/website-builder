@@ -281,9 +281,9 @@ const projectSchema  = new Schema({
 
         data: {
         type: Schema.Types.Mixed,
-        default: {
-          components:[...defaultComponents]
-        },
+        default: 
+          defaultComponents
+        
         },
 
         versions:{

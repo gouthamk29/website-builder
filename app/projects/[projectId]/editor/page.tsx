@@ -40,8 +40,8 @@ useEffect(() => {
       if (!res.ok) throw new Error("Failed to fetch project");
       const data = await res.json();
       console.log(data);
-      console.log(data.project?.data.components);
-      setComponents(data.project?.data.components || []);  
+      console.log(data.project?.data);
+      setComponents(data.project?.data || []);  
       // setComponents(DEVComponentList) // change when done with debug
     } catch (err) {
       console.error(err);
