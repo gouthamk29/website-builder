@@ -115,8 +115,3 @@ Please include tests and keep code style consistent.
 
 MIT License — add a LICENSE file if you publish the project.
 
----
-
-## Contact
-
-If you want help improving this README or adding deployment instructions, tell me what you'd like to include (CI, Vercel/Netlify steps, environment variables, example data, screenshots, etc.).
