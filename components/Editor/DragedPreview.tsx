@@ -1,27 +1,21 @@
 'use client'
-import React from "react"
+import { EditorContext } from "@/app/projects/[projectId]/editor/page";
+import React, { useContext } from "react"
+import { RenderComponent } from "./SortableItem";
 
-export default function DragedPreview({ draggedElement }: { draggedElement: any }) {
+export default function DragedPreview() {
+  
+  const ctx = useContext(EditorContext);
+
+  if (!ctx) {
+  throw new Error("EditorContext must be used within EditorProvider");
+}
+
+  const {draggedElement,components,overId,selectedId,setSelectedId} =ctx;
+  
+
   if (!draggedElement) return null;
-  console.log("Dragged Element",draggedElement)
-  if (typeof draggedElement === "string") {
-    return (
-      <div className="opacity-80 border-2 border-dashed border-blue-400 bg-green-500 px-4 py-2 rounded flex justify-center items-center">
-        <div>
-          <span className="min-h-[20px] min-w-[40px] px-4">{`${draggedElement.toString()}`}</span>
-        </div>
-      </div>
-    );
-  }
 
-  if (typeof draggedElement === "function" || typeof draggedElement === "object") {
-    const Component = draggedElement as React.ElementType;
-    return (
-      <div className="opacity-70">
-        <Component />
-      </div>
-    );
-  }
+  return <RenderComponent id={draggedElement} components={components} overId={overId} selectedId={selectedId} setSelectedId={setSelectedId} />
 
-  return null;
 }

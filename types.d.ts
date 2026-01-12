@@ -84,3 +84,9 @@ export type UserType = {
   createdAt: string; // or Date
   updatedAt: string; // or Date
 };
+
+
+type Prettify<T> = {
+    [k in keyof T]:T[k]
+} & {}
+
