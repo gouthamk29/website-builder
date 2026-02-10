@@ -3,8 +3,9 @@ import { Component } from "@/types";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities"
-import { Dispatch, JSX, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, JSX, SetStateAction, useContext, useEffect, useState } from "react";
 import { primitiveComponentTypes, secondaryComponentTypes } from "@/helpers/componentType";
+import { EditorContext } from "@/app/projects/[projectId]/editor/page";
 
 export default function SortableItem({
   id,
@@ -34,7 +35,7 @@ export default function SortableItem({
 
 export function RenderComponent({ id, components,selectedId,setSelectedId,overId }: { id: string; components: Component[],selectedId:string, overId: string | null;setSelectedId:Dispatch<SetStateAction<string | null>> }) {
   
-
+  const {register} = useContext(EditorContext)
   
   const comp = components.find(c => c.id === id);
   
@@ -75,6 +76,7 @@ const {
   } = sortable;
 
     const mergedRef = (el: HTMLElement | null) => {
+    register(id,el);
     setDragRef(el);
     
   };
@@ -85,7 +87,7 @@ const {
   
   const dragStyle  ={
     ...style,
-    transform:CSS.Transform.toString(transform),
+    transform:undefined,
     opacity: isDragging ? 0.6 : 1,
     zIndex: isDragging && isAbsolute ? 999 : comp.style?.zIndex || "auto",
     outline:
@@ -102,11 +104,12 @@ const {
   const isPrimitive = primitiveComponentTypes.includes(type);
 
   return (
-    <Tag ref={mergedRef} key={id} {...attributes} style={dragStyle} {...listeners} {...dragAttributes}
+    <Tag  ref={mergedRef} key={id} {...attributes} style={dragStyle} {...listeners} {...dragAttributes}
       onClick={(e) => {
         e.stopPropagation()
         setSelectedId(id);
       }}
+      
     >
       {content}
       {children_id.length > 0 && !isAbsolute && isContainer && (

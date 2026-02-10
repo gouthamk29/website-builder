@@ -3,6 +3,7 @@ import CreateProjectModal from "@/components/Modals/modal/CreateProjectModal";
 import DeleteProjectModal from "@/components/Modals/modal/DeleteProjectModal";
 import { useAuth } from "@/hooks/useAuth"
 import { UseModalStore } from "@/store/ModalStore";
+import { Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
 // import { Router } from "next/router";
 import { useEffect, useState } from "react";
@@ -76,11 +77,11 @@ const ProjectView = ({loading,isFetching,projects}) =>{
 
   return (
     <main className="">
-      <div>
+      <div className="p-2">
         <div className="flex w-full justify-between">
           <div className="text-xl font-semibold my-4 px-4 cursor-pointer" onClick={()=>{router.push("/")}}>WebEx</div>
           <div className="text-xl font-semibold mb-4 text-center mt-4">Your projects</div>
-          <div className="text-xl font-semibold my-4 px-4  cursor-pointer">🎲</div>
+          <div className="text-xl font-semibold my-4 px-4  cursor-pointer"><Settings/></div>
         </div>
         {
           loading || isFetching ?(
@@ -108,9 +109,9 @@ const ProjectView = ({loading,isFetching,projects}) =>{
 
             <section>
               <div>
-                <ul className="space-y-2">
+                <ul className="mt-4 gap-3 flex flex-col justify-center box-border mx-4 md:mx-8 xl:mx-16">
                   {projects.map((proj) => (
-                    <div key={proj._id} className="flex flex-row border hover:border-green-500 transition justify-between mx-2 rounded-md">
+                    <div  key={proj._id} className="flex flex-row border hover:bg-gray-100 hover:text-black hover:border-green-500 transition justify-between mx-2 rounded-md ">
                       <li className=" p-3 rounded-md  transition flex-1">
                         {/* <div className="font-medium">{proj.projectId}</div> */}
                         <div className="font-medium">{proj.projectName}</div>
@@ -122,18 +123,19 @@ const ProjectView = ({loading,isFetching,projects}) =>{
                         </div>
                       </li>
                       <div className="flex gap-2 p-2">
-                        <button className="bg-blue-500 hover:bg-blue-700 hover:ring  hover:ring-offset-1  transition my-4 px-2 rounded-sm cursor-pointer" onClick={()=>handleRedirectToProject(proj._id)}>Edit</button>
-                        <button className="bg-red-500 my-4 px-2  hover:ring  hover:ring-offset-1  hover:bg-red-700 transition rounded-sm cursor-pointer" onClick={()=>handleDeleteProject(proj)}>Delete</button>
+                        <button className="bg-blue-500 hover:bg-blue-700 hover:ring  hover:ring-offset-1  transition my-4 px-2 rounded-sm cursor-pointer h-10" onClick={()=>handleRedirectToProject(proj._id)}>Edit</button>
+                        <button className="bg-red-500 my-4 px-2  hover:ring  hover:ring-offset-1  hover:bg-red-700 transition rounded-sm cursor-pointer h-10" onClick={()=>handleDeleteProject(proj)}>Delete</button>
                       </div>
                     </div>
+                    
                   ))}
                 </ul>
               </div>
             </section>
           )
         }
-        <div className="m-2">
-          <button className="bg-blue-500 rounded-2xl p-2 on"
+        <div className="flex my-6 justify-center">
+          <button className="bg-blue-500 rounded-2xl p-2 on px-8 hover:bg-blue-700 hover:ring  hover:ring-offset-1  transition"
             onClick={()=>openModal((onClose)=><CreateProjectModal onClose={onClose}/>)}
           >
                       create a new project

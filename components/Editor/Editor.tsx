@@ -2,8 +2,11 @@
 import { Component } from "@/types";
 import { SortableContext } from "@dnd-kit/sortable";
 import SortableItem from "./SortableItem"
-import { Dispatch, SetStateAction } from "react";
-
+import { Dispatch, SetStateAction, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { EditorContext } from "@/app/projects/[projectId]/editor/page";
+import cx  from "classnames";
+import { getComponentById } from "@/helpers/componentUtilities";
+import { PopoverEditorWrapper } from "./EditComponent/PopoverEditor";
 
 
 export default function Editor({component,setComponents,selectedId,setSelectedId,overId}:{
@@ -13,8 +16,8 @@ export default function Editor({component,setComponents,selectedId,setSelectedId
   setSelectedId:Dispatch<SetStateAction<string | null>>,
   overId:string | null
 }){
-  // console.log(...component)
-  console.log(component.find(c => c.id == "_body"))
+  // const {selectedId,setSelectedId} =useContext(EditorContext);
+  // console.log(component.find(c => c.id == "_body"))
   const root = component.find(c => c.id === "_body");
 
   if(!root)
@@ -28,9 +31,7 @@ export default function Editor({component,setComponents,selectedId,setSelectedId
 
   return (
     <div className="h-full flex justify-center">
-      <div className="flex-1 w-3/5 border-red-600 border">
-      
-        
+      <div className="flex-1 w-3/5 relative">
           <div id="_body" style={root.style} {...root.attributes}>
             {root.content}
             <SortableContext
@@ -48,12 +49,11 @@ export default function Editor({component,setComponents,selectedId,setSelectedId
               ))}
             </SortableContext>
           </div>
-        </div>
+          <PopoverEditorWrapper selectedId={selectedId}/>
+          
+      </div>
       </div>
      
   );
 }
-
-
-
 

@@ -1,29 +1,74 @@
 'use client'
 import Editor from "@/components/Editor/Editor"
 import EditorSidebar from "@/components/Editor/EditorSidebar"
-import { use, useEffect, useRef, useState } from "react"
+import { createContext, use, useContext, useEffect, useRef, useState } from "react"
 import { Component } from "@/types"
 
-import DEVcomponentList from "@/dev-comp/DEVcomponentList"
 import { DndContext, DragEndEvent, DragOverlay, PointerSensor, useSensor, useSensors } from "@dnd-kit/core"
 import DragedPreview from "@/components/Editor/DragedPreview"
-import { randomUUID } from "crypto"
 import { primitiveComponentTypes, secondaryComponentTypes } from "@/helpers/componentType"
 import { useAuth } from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
-import DEVComponentList from "@/dev-comp/DEVcomponentList"
 
+
+
+
+export type EditorContextType = {
+  overId: string | null;
+  setOverId: React.Dispatch<React.SetStateAction<string | null>>;
+
+  selectedId: string | null;
+  setSelectedId: React.Dispatch<React.SetStateAction<string | null>>;
+
+  draggedElement: any;
+  setDraggedElement: React.Dispatch<React.SetStateAction<any>>;
+
+  components: Component[];
+  setComponents: React.Dispatch<React.SetStateAction<Component[]>>;
+
+  isFetching: boolean;
+  setIsFetching: React.Dispatch<React.SetStateAction<boolean>>;
+  
+  register: (id: string, el: HTMLElement | null) => void;
+  getRef: (id: string) => HTMLElement | undefined;
+  getRect: (id: string) => DOMRect | null;
+
+};
+
+type refMap = Map<string,HTMLElement>;
+
+export const EditorContext = createContext<EditorContextType|null>(null);
 
 export default function  Page({params}: { params: Promise<{ projectId: string }> }){
   
+
+  const componentsRef = useRef<refMap>(new Map());
+
+
+   const register = (id: string, el: HTMLElement | null) => {
+    if (!el) {
+      componentsRef.current.delete(id);
+      return;
+    }
+    componentsRef.current.set(id, el);
+  };
+
+  const getRef = (id: string) => componentsRef.current.get(id);
+
+  const getRect = (id: string) => {
+    const el = componentsRef.current.get(id);
+    return el ? el.getBoundingClientRect() : null;
+  };
+
   const resolvedParams = use(params)
   const projectId = resolvedParams.projectId
   const router = useRouter();
   const [components,setComponents] =useState<Component[]>([]) 
   const [isFetching, setIsFetching] = useState(false);
-
+  const [overId, setOverId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [draggedElement,setDraggedElement]=useState(null);
   const {user,loading}=useAuth();
-  
   
   useEffect(()=>{
     if (!loading && !user) {
@@ -39,10 +84,8 @@ useEffect(() => {
       const res = await fetch(`/api/projects/user/${user._id}/${projectId}`);
       if (!res.ok) throw new Error("Failed to fetch project");
       const data = await res.json();
-      console.log(data);
       console.log(data.project?.data);
       setComponents(data.project?.data || []);  
-      // setComponents(DEVComponentList) // change when done with debug
     } catch (err) {
       console.error(err);
     } finally {
@@ -53,14 +96,27 @@ useEffect(() => {
   fetchComponent();
 }, [user, projectId]); // ✅ remove isFetching
 
-    const [draggedItem,setDraggedItem] = useState(null)
-    const [overId, setOverId] = useState<string | null>(null);
-    const [selectedId, setSelectedId] = useState<string | null>(null);
-    const CurrentSelectedId = useRef(null);
-    const [draggedElement,setDraggedElement]=useState(null);
+  const ContextObject:EditorContextType = {
+    overId,
+    setOverId,
+    selectedId,
+    setSelectedId,
+    // CurrentSelectedId,
+    draggedElement,
+    setDraggedElement,
+    components,
+    setComponents,
+    isFetching,
+    setIsFetching,
 
+    getRef,
+    register,
+    getRect,
+  }
 
-
+  
+  
+    
 
 function updateComponentList(element: any, parentId: string) {
   setComponents(prev => {
@@ -98,17 +154,10 @@ function CreateNewElement(element){
   return newComponent;
 }
 
-
-
-
 function handleDragStart(event:any){
     console.log(event)
-    CurrentSelectedId.current = event.active.id;
     setSelectedId(event.active.id);
-    console.log("dragged",selectedId,CurrentSelectedId)
-    setDraggedItem(event.active.id);
-      const elementType = event.active.data.current?.elementType;
-    setDraggedElement(elementType)
+    setDraggedElement(event.active.id);
 }
 
 
@@ -211,8 +260,6 @@ function handleDragEnd(event: DragEndEvent) {
   return newChildren;
 }
 
-
-
 function updateComponentByShifting(activeId: string, overId: string) {
   setComponents(prev => {
     const newComponents = prev.map(c => ({ ...c }));
@@ -256,28 +303,31 @@ function updateComponentByShifting(activeId: string, overId: string) {
   });
 }
 
-
   const sensor = useSensors( useSensor(PointerSensor,{
     activationConstraint:{
       distance:5
     }
   }))
 
-    return <div className=" h-full flex relative">
-        
+    return <div className=" h-full relative flex">
+        <EditorContext.Provider value={ContextObject}>
+
         <DndContext sensors={sensor} onDragStart={handleDragStart}  onDragOver={handleDragOver}  onDragEnd={handleDragEnd}>
-            <div className="flex-1 bg-black h-full">
+            <div className=" bg-black h-full flex-1">
                 <Editor component={components} setComponents={setComponents} selectedId={selectedId} setSelectedId={setSelectedId} overId={overId}/>
             </div>
-            <div className=" z-1 h-full">
-                <EditorSidebar components={components} setComponents={setComponents} selectedId={selectedId} projectId={projectId} />
+            <div className="min-w-12">
+              <div className="fixed right-0 top-0 bottom-0 z-999 ">
+                  <EditorSidebar components={components} setComponents={setComponents} selectedId={selectedId} projectId={projectId} />
+              </div>
             </div>
             <DragOverlay>
               {
-                selectedId  && <DragedPreview draggedElement={draggedElement}/>
+                draggedElement && <DragedPreview/>
               }
             </DragOverlay>
         </DndContext>
+      </EditorContext.Provider>
     </div>
 }
 
