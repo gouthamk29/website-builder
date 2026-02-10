@@ -3,7 +3,7 @@
 import { Dispatch, useState, useEffect, SetStateAction, useRef, use, ReactNode } from "react";
 import { Component } from "@/types"; 
 import cx  from "classnames";
-import { ChevronFirst, ListCollapse, Pencil, Save, SquarePlus } from "lucide-react";
+import { ArrowDownToLine, ChevronFirst, ListCollapse, Pencil, Save, SquarePlus } from "lucide-react";
 import { Tooltip } from "react-tooltip";
 import { AddComponentElements } from "./AddComponentElements";
 import { componentProperty } from "./EditComponent/componentProperties";
@@ -52,6 +52,97 @@ function EditorSidebar({
         }
       )
     }
+
+    async function downloadHtml(components:Component[]) {
+     const map = new Map<string, Component>();
+  components.forEach((c) => map.set(c.id, c));
+
+  // 2️⃣ Find root
+  const root = map.get('_body');
+  if (!root) {
+    throw new Error('Root component (_body) not found');
+  }
+
+  // 3️⃣ Render HTML
+  const bodyHtml = renderComponent(root, map);
+
+  // 4️⃣ Full document
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exported Page</title>
+</head>
+<body>
+${bodyHtml}
+</body>
+</html>`;
+
+  // 5️⃣ Create downloadable file
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+
+  // 6️⃣ Trigger download
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'index.html';
+  document.body.appendChild(a);
+  a.click();
+
+  // 7️⃣ Cleanup
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+    }
+
+function styleToString(style: Record<string, string> = {}) {
+  return Object.entries(style)
+    .map(([k, v]) => `${k}:${v}`)
+    .join(';');
+}
+
+function attributesToString(
+  attrs: Record<string, string> = {},
+  style?: Record<string, string>
+) {
+  const attrString = Object.entries(attrs)
+    .map(([k, v]) => `${k}="${v}"`)
+    .join(' ');
+
+  const styleString =
+    style && Object.keys(style).length
+      ? `style="${styleToString(style)}"`
+      : '';
+
+  return [attrString, styleString].filter(Boolean).join(' ');
+}
+
+function renderComponent(
+  component: Component,
+  map: Map<string, Component>
+): string {
+  const { type } = component;
+  const attrs = attributesToString(component.attributes, component.style);
+
+  // Primitive (text / void)
+  if ('content' in component) {
+    const voidTags = new Set(['img', 'input', 'br', 'hr']);
+    if (voidTags.has(type)) {
+      return `<${type} ${attrs} />`;
+    }
+    return `<${type} ${attrs}>${component.content}</${type}>`;
+  }
+
+  // Container
+  const childrenHtml = component.children_id
+    .map((id) => {
+      const child = map.get(id);
+      return child ? renderComponent(child, map) : '';
+    })
+    .join('');
+
+  return `<${type} ${attrs}>${childrenHtml}</${type}>`;
+}
 
   return <>
 
@@ -130,6 +221,19 @@ function EditorSidebar({
                 <EditComponent selectedId={selectedId} components={components} setComponents={setComponents}/>
               </div>
           </div> 
+
+           <div className="">
+              <button
+                data-tooltip-id="my-tooltip" data-tooltip-content="Download HTML"
+                className="w-full flex justify-center anchor-target "
+                popoverTarget="download-html" popoverTargetAction="toggle"
+                onClick={() =>{downloadHtml(components)}}  
+                >
+                <IconButton>
+                  <ArrowDownToLine/>
+                </IconButton>
+              </button>
+          </div>
 
           <Tooltip id="my-tooltip"  positionStrategy="fixed"offset={12} delayHide={250}/>
         </div>
