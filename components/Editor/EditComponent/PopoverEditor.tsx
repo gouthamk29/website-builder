@@ -125,18 +125,19 @@ export function PopoverEditorWrapper({ selectedId }: { selectedId: string | null
 export function PopoverEditor({toggle,setToggle}){
 
   
+  
   const ctx =useContext(EditorContext);
   if(!ctx) throw new Error ("Context not found")
     
   const {selectedId,setComponents,components} =ctx; 
   if(selectedId===null) return  
+  const selectedComponent:Component|null = getComponentById(selectedId,components) || null;
     
-  const selectedComponent:Component|null = getComponentById(selectedId,components)!;
     
   if(selectedComponent==null) return null;
     
-  const [size,setSize]=useState(selectedComponent.style.fontSize ?? "")
   const [color,setColor]=useState(selectedComponent.style.color?? "")
+  const [size,setSize]=useState(selectedComponent.style.fontSize ?? "")
 
   function UpdateComponent(change,targerComponent){
     const prop = {
